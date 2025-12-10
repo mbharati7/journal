@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Moments – Journal & Stories</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Icons (Remix Icon) -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-elevated: #0b1020;
+      --bg-soft: #111827;
+      --accent: #6366f1;
+      --accent-soft: rgba(99, 102, 241, 0.1);
+      --accent-strong: #4f46e5;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border-subtle: rgba(148, 163, 184, 0.25);
+      --danger: #f97373;
+      --success: #22c55e;
+      --warning: #fbbf24;
+      --radius-lg: 18px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.8);
+      --blur: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 50%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Layout */
+    .app-shell {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1.5fr) 320px;
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 1.5rem auto;
+      padding: 0 1rem 1.5rem;
+    }
+
+    @media (max-width: 1024px) {
+      .app-shell {
+        grid-template-columns: 230px minmax(0, 2fr);
+      }
+      .right-panel { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .app-shell {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .sidebar { display: none; }
+    }
+
+    /* Glassy panels */
+    .panel {
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 60%);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(var(--blur));
+      padding: 1.2rem 1.3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at top, rgba(148, 163, 184, 0.12), transparent 60%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .panel-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Top bar */
+    .topbar {
+      max-width: 1200px;
+      margin: 1rem auto 0.25rem;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 14px;
+      background: conic-gradient(from 160deg, #4f46e5, #ec4899, #22c55e, #4f46e5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 18px rgba(129, 140, 248, 0.7);
+    }
+
+    .brand-logo i { font-size: 20px; color: white; }
+
+    .brand-text-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-text-sub {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-pill);
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0, #22c55e, #4f46e5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .user-name { font-size: 0.85rem; }
+
+    .pill {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.15);
+      color: var(--muted);
+    }
+
+    /* Sidebar */
+    .sidebar-nav-group { margin-bottom: 1.4rem; }
+
+    .sidebar-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .nav-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.16s ease-out;
+      border: 1px solid transparent;
+    }
+
+    .nav-item i { font-size: 1rem; }
+
+    .nav-item.active,
+    .nav-item:hover {
+      color: #e5e7eb;
+      background: radial-gradient(circle at top left, rgba(79, 70, 229, 0.26), transparent 70%);
+      border-color: rgba(79, 70, 229, 0.6);
+    }
+
+    /* New entry composer */
+    .composer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .composer-title {
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .composer-title span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.7rem;
+    }
+
+    .composer-meta {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .composer-meta i { font-size: 0.9rem; }
+
+    .composer-body {
+      display: grid;
+      gap: 0.55rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .composer-row {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .input,
+    .select {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      border-radius: 999px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--text);
+      outline: none;
+      min-width: 0;
+    }
+
+    .input::placeholder { color: #6b7280; }
+
+    .input-full {
+      border-radius: 12px;
+      padding: 0.55rem 0.8rem;
+      resize: vertical;
+      min-height: 72px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .select {
+      padding-right: 1.8rem;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239CA3AF' stroke-width='1.3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.7rem center;
+      background-size: 12px 8px;
+    }
+
+    .tag-badge {
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      padding: 0.3rem 0.7rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .tag-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 6px rgba(129, 140, 248, 0.9);
+    }
+
+    .btn {
+      border-radius: var(--radius-pill);
+      border: none;
+      padding: 0.45rem 0.95rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, background 0.15s ease-out;
+      outline: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+      box-shadow: 0 10px 30px rgba(79, 70, 229, 0.5);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 40px rgba(79, 70, 229, 0.75);
+    }
+
+    .btn-ghost {
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--muted);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(148, 163, 184, 0.7);
+    }
+
+    .composer-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .composer-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .chip {
+      font-size: 0.74rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .chip i { font-size: 0.9rem; }
+
+    /* Feed header */
+    .feed-header {
+      margin-top: 1rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .feed-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .feed-tabs {
+      display: flex;
+      gap: 0.3rem;
+      flex-wrap: wrap;
+    }
+
+    .feed-tab {
+      border-radius: 999px;
+      padding: 0.22rem 0.7rem;
+      font-size: 0.75rem;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .feed-tab.active {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(79, 70, 229, 0.7);
+      color: #e5e7eb;
+    }
+
+    .feed-tab i { font-size: 0.9rem; }
+
+    /* Cards */
+    .feed-list {
+      display: grid;
+      gap: 0.7rem;
+      margin-top: 0.5rem;
+    }
+
+    .card {
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 0.75rem 0.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(148, 163, 184, 0.08), transparent 60%);
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.7rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .card-user {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .card-user-main {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .card-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #4f46e5, #ec4899);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .card-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .card-time {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .badge-visibility {
+      font-size: 0.7rem;
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .badge-visibility i { font-size: 0.8rem; }
+
+    .badge-private {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      color: var(--muted);
+    }
+
+    .badge-friends {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(45, 212, 191, 0.7);
+      color: #a7f3d0;
+    }
+
+    .badge-public {
+      background: rgba(129, 140, 248, 0.14);
+      border: 1px solid rgba(129, 140, 248, 0.7);
+      color: #c7d2fe;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+    }
+
+    .card-content {
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      line-height: 1.5;
+      margin-bottom: 0.4rem;
+      max-height: 4.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+    }
+
+    .card-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .icon-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+      padding: 0.2rem 0.55rem;
+      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      cursor: pointer;
+      transition: all 0.14s ease-out;
+    }
+
+    .icon-btn i { font-size: 0.9rem; }
+
+    .icon-btn:hover {
+      border-color: rgba(148, 163, 184, 0.9);
+      color: #e5e7eb;
+    }
+
+    .icon-btn.like.active {
+      border-color: rgba(248, 113, 113, 0.95);
+      background: rgba(248, 113, 113, 0.18);
+      color: #fecaca;
+    }
+
+    .icon-btn.bookmark.active {
+      border-color: rgba(234, 179, 8, 0.9);
+      background: rgba(234, 179, 8, 0.16);
+      color: #fef3c7;
+    }
+
+    .card-tags {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .tag-chip {
+      font-size: 0.7rem;
+      padding: 0.18rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      color: var(--muted);
+    }
+
+    /* Right panel - Top picks & notifications */
+    .section-header {
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.25rem;
+    }
+
+    .section-header span {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .top-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.2rem 0 0.7rem;
+      display: grid;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+    }
+
+    .top-item {
+      padding: 0.4rem 0.5rem;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(30, 64, 175, 0.7);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .top-main {
+      display: flex;
+      flex-direction: column;
+      gap: 0.08rem;
+    }
+
+    .top-title { font-size: 0.82rem; }
+
+    .top-meta {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .top-score {
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: #facc15;
+    }
+
+    .top-score i { font-size: 1rem; }
+
+    .notification-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.2rem 0 0;
+      display: grid;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      max-height: 190px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      padding: 0.4rem 0.5rem;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+
+    .notification-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(234, 179, 8, 0.12);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #facc15;
+      font-size: 0.9rem;
+    }
+
+    .notification-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.08rem;
+    }
+
+    .notification-text strong { color: #e5e7eb; }
+
+    .notification-time {
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    .bookmark-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+
+    .empty-state {
+      font-size: 0.8rem;
+      color: var(--muted);
+      padding: 0.5rem 0.4rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Simple auth box -->
+  <div id="auth-box" style="max-width:340px;margin:10px auto 0;padding:10px 14px;border-radius:12px;border:1px solid #374151;background:#020617;font-family:inherit;color:#e5e7eb;font-size:0.85rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <span style="font-weight:600;">Account</span>
+      <span id="auth-status" style="color:#9ca3af;font-size:0.75rem;">Not logged in</span>
+    </div>
+    <input id="auth-email" type="email" placeholder="Email"
+      style="width:100%;margin-bottom:4px;padding:4px 8px;border-radius:999px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;font-size:0.8rem;">
+    <input id="auth-password" type="password" placeholder="Password"
+      style="width:100%;margin-bottom:6px;padding:4px 8px;border-radius:999px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;font-size:0.8rem;">
+
+    <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+      <button id="auth-signup"
+        style="padding:4px 10px;border-radius:999px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;font-size:0.78rem;cursor:pointer;">
+        Sign up
+      </button>
+      <button id="auth-login"
+        style="padding:4px 10px;border-radius:999px;border:none;background:#4f46e5;color:white;font-size:0.78rem;cursor:pointer;">
+        Log in
+      </button>
+      <button id="auth-logout"
+        style="padding:4px 10px;border-radius:999px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;font-size:0.78rem;cursor:pointer;display:none;">
+        Log out
+      </button>
+    </div>
+  </div>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">
+        <i class="ri-quill-pen-line"></i>
+      </div>
+      <div>
+        <div class="brand-text-title">WriteYourself</div>
+        <div class="brand-text-sub">Write • Share • Inspire</div>
+      </div>
+    </div>
+
+    <div class="user-chip">
+      <div class="user-avatar">BM</div>
+      <div>
+        <div class="user-name">Hi, Bharati</div>
+        <div class="pill">You · Creator mode</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Layout -->
+  <main class="app-shell">
+    <!-- Sidebar -->
+    <aside class="panel sidebar">
+      <div class="panel-inner">
+        <div class="sidebar-nav-group">
+          <div class="sidebar-title">Main</div>
+          <ul class="nav-list">
+            <li class="nav-item active" data-view="feed">
+              <i class="ri-fire-line"></i>
+              Home Feed
+            </li>
+            <li class="nav-item" data-view="bookmarks">
+              <i class="ri-bookmark-3-line"></i>
+              Bookmarks
+            </li>
+            <li class="nav-item" data-view="my-journal">
+              <i class="ri-user-heart-line"></i>
+              My Journals
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-nav-group">
+          <div class="sidebar-title">Discover</div>
+          <ul class="nav-list">
+            <li class="nav-item" data-category="Journal">
+              <i class="ri-edit-2-line"></i>
+              Journal Entries
+            </li>
+            <li class="nav-item" data-category="Shayari">
+              <i class="ri-double-quotes-l"></i>
+              Shayari
+            </li>
+            <li class="nav-item" data-category="Poetry">
+              <i class="ri-book-open-line"></i>
+              Poetry
+            </li>
+            <li class="nav-item" data-category="Music">
+              <i class="ri-music-2-line"></i>
+              Music Picks
+            </li>
+            <li class="nav-item" data-category="Movies">
+              <i class="ri-movie-2-line"></i>
+              Movies
+            </li>
+            <li class="nav-item" data-category="Stories">
+              <i class="ri-pen-nib-line"></i>
+              Short Stories
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-nav-group">
+          <div class="sidebar-title">Tips</div>
+          <div class="bookmark-hint">
+            🌟 Bookmark journals that inspire you. Authors get notified every time someone saves their work.
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Middle: composer + feed -->
+    <section class="panel">
+      <div class="panel-inner">
+        <!-- Composer -->
+        <div class="composer-header">
+          <div>
+            <div class="composer-title">
+              <span><i class="ri-sparkling-2-line"></i></span>
+              New moment
+            </div>
+            <div class="composer-meta">
+              <span><i class="ri-time-line"></i> <span id="composer-datetime">Auto date & time</span></span>
+              <span><i class="ri-lock-unlock-line"></i> Choose visibility</span>
+            </div>
+          </div>
+          <button class="btn btn-ghost" id="clear-composer">
+            <i class="ri-eraser-line"></i>
+            Clear
+          </button>
+        </div>
+
+        <div class="composer-body">
+          <div class="composer-row">
+            <input class="input" id="title-input" type="text" placeholder="Give this moment a title (optional)" />
+            <select class="select" id="category-select">
+              <option value="Journal">Journal</option>
+              <option value="Shayari">Shayari</option>
+              <option value="Poetry">Poetry</option>
+              <option value="Music">Music suggestion</option>
+              <option value="Movies">Movie recommendation</option>
+              <option value="Stories">Short story</option>
+            </select>
+            <select class="select" id="visibility-select">
+              <option value="private">Private</option>
+              <option value="friends">Close friends</option>
+              <option value="public" selected>Public</option>
+            </select>
+          </div>
+
+          <textarea class="input input-full" id="content-input"
+            placeholder="Write your journal, shayari, poetry, movie review, or a song you love..."></textarea>
+
+          <div class="tag-badge">
+            <span class="tag-dot"></span>
+            Your entry is now stored online (Firebase) and visible based on the visibility you choose.
+          </div>
+        </div>
+
+        <div class="composer-footer">
+          <div class="composer-actions">
+            <button class="btn btn-primary" id="publish-btn">
+              <i class="ri-send-plane-2-line"></i>
+              Post moment
+            </button>
+            <button class="btn btn-ghost" id="save-draft-btn">
+              <i class="ri-save-3-line"></i>
+              Save as draft
+            </button>
+          </div>
+          <div class="chip">
+            <i class="ri-sun-line"></i>
+            Today is a good day to write.
+          </div>
+        </div>
+
+        <!-- Feed -->
+        <div class="feed-header">
+          <div class="feed-title">
+            <i class="ri-compass-3-line"></i>
+            <span id="feed-title-text">Home feed · All categories</span>
+          </div>
+          <div class="feed-tabs">
+            <button class="feed-tab active" data-filter="all">
+              <i class="ri-global-line"></i>
+              All
+            </button>
+            <button class="feed-tab" data-filter="Journal">Journal</button>
+            <button class="feed-tab" data-filter="Shayari">Shayari</button>
+            <button class="feed-tab" data-filter="Poetry">Poetry</button>
+            <button class="feed-tab" data-filter="Music">Music</button>
+            <button class="feed-tab" data-filter="Movies">Movies</button>
+            <button class="feed-tab" data-filter="Stories">Stories</button>
+          </div>
+        </div>
+
+        <div id="feed-list" class="feed-list"></div>
+        <div id="empty-feed" class="empty-state" style="display: none;">
+          No entries yet. Start by writing your first moment above. ✨
+        </div>
+      </div>
+    </section>
+
+    <!-- Right panel -->
+    <aside class="panel right-panel">
+      <div class="panel-inner">
+        <div class="section-header">
+          <span>Top picked for everyone</span>
+          <span><i class="ri-sparkling-2-line"></i> Auto-updated from votes</span>
+        </div>
+
+        <ul id="top-picks-list" class="top-list"></ul>
+
+        <div class="section-header" style="margin-top: 0.6rem;">
+          <span>Notifications</span>
+          <span><i class="ri-notification-3-line"></i> Bookmarks & likes</span>
+        </div>
+        <ul id="notification-list" class="notification-list"></ul>
+
+        <div class="bookmark-hint">
+          Journals you write are treated as if you are the owner. When someone bookmarks a post,
+          a notification appears here (prototype: same browser).
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Main UI logic -->
+  <script>
+    // Global state
+    const state = {
+      entries: [],
+      notifications: [],
+      activeFilter: "all",
+      view: "feed", // feed | bookmarks | my-journal
+    };
+    window.state = state;
+
+    const feedList = document.getElementById("feed-list");
+    const emptyFeed = document.getElementById("empty-feed");
+    const composerDatetime = document.getElementById("composer-datetime");
+    const topPicksList = document.getElementById("top-picks-list");
+    const notificationList = document.getElementById("notification-list");
+    const feedTitleText = document.getElementById("feed-title-text");
+
+    function formatDateTime(date) {
+      return date.toLocaleString(undefined, {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    function updateComposerTime() {
+      composerDatetime.textContent = formatDateTime(new Date());
+    }
+    updateComposerTime();
+    setInterval(updateComposerTime, 30000);
+
+    function renderFeed() {
+      const user = window.currentUser || null;
+      feedList.innerHTML = "";
+
+      let entries = [...state.entries];
+
+      // Visibility filter (Option C)
+      entries = entries.filter((e) => {
+        if (e.visibility === "public") return true;
+        if (!user) return false;
+        // private & friends visible only to owner (for now)
+        return e.ownerId === user.uid;
+      });
+
+      // View filters
+      if (state.view === "bookmarks") {
+        entries = entries.filter((e) => e.bookmarks > 0);
+        feedTitleText.textContent = "Bookmarks · Moments that got saved";
+      } else if (state.view === "my-journal") {
+        if (user) {
+          entries = entries.filter((e) => e.ownerId === user.uid);
+        } else {
+          entries = [];
+        }
+        feedTitleText.textContent = "My Journals · Everything you've written";
+      } else {
+        feedTitleText.textContent =
+          state.activeFilter === "all"
+            ? "Home feed · All categories"
+            : `Home feed · ${state.activeFilter}`;
+      }
+
+      // Category filter (only in main feed view)
+      if (state.activeFilter !== "all" && state.view === "feed") {
+        entries = entries.filter((e) => e.category === state.activeFilter);
+      }
+
+      // Sort newest first
+      entries.sort((a, b) => b.createdAt - a.createdAt);
+
+      if (entries.length === 0) {
+        emptyFeed.style.display = "block";
+        return;
+      } else {
+        emptyFeed.style.display = "none";
+      }
+
+      entries.forEach((entry) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.dataset.id = entry.id;
+
+        const isMoviesOrBooks = entry.category === "Movies" || entry.category === "Books";
+
+        const visibilityBadgeClass =
+          entry.visibility === "private"
+            ? "badge-private"
+            : entry.visibility === "friends"
+            ? "badge-friends"
+            : "badge-public";
+
+        const visibilityIcon =
+          entry.visibility === "private"
+            ? "ri-lock-2-line"
+            : entry.visibility === "friends"
+            ? "ri-user-smile-line"
+            : "ri-earth-line";
+
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="card-top">
+              <div class="card-user">
+                <div class="card-user-main">
+                  <div class="card-avatar">${(entry.author || "U")
+                    .split(" ")
+                    .map((p) => p[0])
+                    .join("")
+                    .toUpperCase()}</div>
+                  <div class="card-name">${entry.author || "Unknown"}</div>
+                </div>
+                <div class="card-time">${formatDateTime(entry.createdAt)}</div>
+              </div>
+              <div class="badge-visibility ${visibilityBadgeClass}">
+                <i class="${visibilityIcon}"></i>
+                <span>${
+                  entry.visibility === "private"
+                    ? "Private"
+                    : entry.visibility === "friends"
+                    ? "Close friends"
+                    : "Public"
+                }</span>
+              </div>
+            </div>
+
+            <div class="card-title">${entry.title || "(Untitled)"}</div>
+            <div class="card-content">${entry.content
+              .replace(/\n/g, "<br>")
+              .slice(0, 220)}${entry.content.length > 220 ? "..." : ""}</div>
+
+            <div class="card-footer">
+              <div class="card-actions">
+                <button class="icon-btn like ${entry._liked ? "active" : ""}" data-action="like">
+                  <i class="ri-heart-3-fill"></i>
+                  <span>${entry.likes || 0}</span>
+                </button>
+                <button class="icon-btn bookmark ${entry._bookmarked ? "active" : ""}" data-action="bookmark">
+                  <i class="ri-bookmark-3-fill"></i>
+                  <span>${entry.bookmarks || 0}</span>
+                </button>
+              </div>
+              <div class="card-tags">
+                <span class="tag-chip">${entry.category}</span>
+                ${
+                  isMoviesOrBooks
+                    ? `<span class="tag-chip">Top pick candidate</span>`
+                    : ""
+                }
+              </div>
+            </div>
+          </div>
+        `;
+
+        feedList.appendChild(card);
+      });
+    }
+
+    function renderTopPicks() {
+      topPicksList.innerHTML = "";
+
+      const user = window.currentUser || null;
+
+      // movies & books (if you add Books category later)
+      let picks = state.entries.filter(
+        (e) => e.category === "Movies" || e.category === "Books"
+      );
+
+      // visibility filter same as feed
+      picks = picks.filter((e) => {
+        if (e.visibility === "public") return true;
+        if (!user) return false;
+        return e.ownerId === user.uid;
+      });
+
+      picks.sort((a, b) => (b.likes + b.bookmarks) - (a.likes + a.bookmarks));
+      picks = picks.slice(0, 4);
+
+      if (picks.length === 0) {
+        const li = document.createElement("li");
+        li.className = "empty-state";
+        li.textContent =
+          "Top voted movies & books will appear here and get suggested to all users.";
+        topPicksList.appendChild(li);
+        return;
+      }
+
+      picks.forEach((entry) => {
+        const li = document.createElement("li");
+        li.className = "top-item";
+        li.innerHTML = `
+          <div class="top-main">
+            <div class="top-title">${entry.title}</div>
+            <div class="top-meta">${entry.category} · by ${entry.author}</div>
+          </div>
+          <div class="top-score">
+            <i class="ri-bar-chart-box-line"></i>
+            <span>${(entry.likes || 0) + (entry.bookmarks || 0)} votes</span>
+          </div>
+        `;
+        topPicksList.appendChild(li);
+      });
+    }
+
+    function renderNotifications() {
+      notificationList.innerHTML = "";
+
+      const notifications = [...state.notifications].sort(
+        (a, b) => b.timestamp - a.timestamp
+      );
+
+      if (notifications.length === 0) {
+        const li = document.createElement("li");
+        li.className = "empty-state";
+        li.textContent =
+          "When your journal gets bookmarked, you'll see notifications here (per owner).";
+        notificationList.appendChild(li);
+        return;
+      }
+
+      notifications.forEach((n) => {
+        const li = document.createElement("li");
+        li.className = "notification-item";
+        li.innerHTML = `
+          <div class="notification-icon">
+            <i class="ri-bookmark-3-fill"></i>
+          </div>
+          <div class="notification-content">
+            <div class="notification-text">
+              <strong>${n.actor}</strong> bookmarked your journal
+              <strong>“${n.entryTitle}”</strong>.
+            </div>
+            <div class="notification-time">${formatDateTime(n.timestamp)}</div>
+          </div>
+        `;
+        notificationList.appendChild(li);
+      });
+    }
+
+    window.renderFeed = renderFeed;
+    window.renderTopPicks = renderTopPicks;
+    window.renderNotifications = renderNotifications;
+
+    function addNotificationForBookmark(entry) {
+      state.notifications.push({
+        id: Date.now(),
+        actor: "Someone",
+        entryTitle: entry.title || "Untitled",
+        timestamp: new Date(),
+      });
+      renderNotifications();
+    }
+
+    // Publish: posts to Firestore via window.savePostToFirestore
+    document.getElementById("publish-btn").addEventListener("click", async () => {
+      if (!window.currentUser) {
+        alert("Please log in or sign up before posting.");
+        return;
+      }
+
+      const title = document.getElementById("title-input").value.trim();
+      const content = document.getElementById("content-input").value.trim();
+      const category = document.getElementById("category-select").value;
+      const visibility = document.getElementById("visibility-select").value;
+
+      if (!content) {
+        alert("Write something in your journal before posting 😊");
+        return;
+      }
+
+      const postData = {
+        ownerId: window.currentUser.uid,
+        author: window.currentUser.email || "You",
+        title,
+        content,
+        category,
+        visibility,
+        likes: 0,
+        bookmarks: 0,
+      };
+
+      if (!window.savePostToFirestore) {
+        alert("Backend not ready yet. Reload the page or check Firebase script.");
+        return;
+      }
+
+      try {
+        await window.savePostToFirestore(postData);
+        document.getElementById("title-input").value = "";
+        document.getElementById("content-input").value = "";
+      } catch (err) {
+        console.error("Error posting:", err);
+        alert("Could not post. See console for details.");
+      }
+    });
+
+    document.getElementById("save-draft-btn").addEventListener("click", () => {
+      alert("Draft saving is not wired yet. You can later connect this to localStorage.");
+    });
+
+    document.getElementById("clear-composer").addEventListener("click", () => {
+      document.getElementById("title-input").value = "";
+      document.getElementById("content-input").value = "";
+    });
+
+    // Feed actions: like & bookmark
+    feedList.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-action]");
+      if (!btn) return;
+
+      const user = window.currentUser;
+      if (!user) {
+        alert("Please log in to like or bookmark.");
+        return;
+      }
+
+      const card = e.target.closest(".card");
+      const id = card.dataset.id;
+      const entry = state.entries.find((en) => String(en.id) === String(id));
+      if (!entry) return;
+
+      const action = btn.dataset.action;
+      if (action === "like") {
+        entry._liked = !entry._liked;
+        entry.likes = (entry.likes || 0) + (entry._liked ? 1 : -1);
+      } else if (action === "bookmark") {
+        entry._bookmarked = !entry._bookmarked;
+        entry.bookmarks = (entry.bookmarks || 0) + (entry._bookmarked ? 1 : -1);
+        if (entry._bookmarked && entry.ownerId === user.uid) {
+          addNotificationForBookmark(entry);
+        }
+      }
+
+      if (window.updatePostCounts) {
+        window
+          .updatePostCounts(entry.id, {
+            likes: entry.likes,
+            bookmarks: entry.bookmarks,
+          })
+          .catch((err) => console.error("Failed to sync counts:", err));
+      }
+
+      renderFeed();
+      renderTopPicks();
+    });
+
+    // Filter tabs
+    document.querySelectorAll(".feed-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document
+          .querySelectorAll(".feed-tab")
+          .forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        state.activeFilter = tab.dataset.filter;
+        state.view = "feed";
+
+        document
+          .querySelectorAll(".sidebar .nav-item[data-view]")
+          .forEach((item) => item.classList.remove("active"));
+        const homeItem = document.querySelector('.sidebar .nav-item[data-view="feed"]');
+        if (homeItem) homeItem.classList.add("active");
+
+        renderFeed();
+      });
+    });
+
+    // Sidebar view handlers
+    document.querySelectorAll(".sidebar .nav-item[data-view]").forEach((item) => {
+      item.addEventListener("click", () => {
+        document
+          .querySelectorAll(".sidebar .nav-item[data-view]")
+          .forEach((i) => i.classList.remove("active"));
+        item.classList.add("active");
+
+        state.view = item.dataset.view;
+        renderFeed();
+      });
+    });
+
+    // Sidebar category shortcuts
+    document.querySelectorAll(".sidebar .nav-item[data-category]").forEach((item) => {
+      item.addEventListener("click", () => {
+        const cat = item.dataset.category;
+        state.view = "feed";
+        state.activeFilter = cat;
+
+        document
+          .querySelectorAll(".feed-tab")
+          .forEach((tab) => tab.classList.remove("active"));
+        const matchTab = document.querySelector(`.feed-tab[data-filter="${cat}"]`);
+        if (matchTab) matchTab.classList.add("active");
+
+        document
+          .querySelectorAll(".sidebar .nav-item[data-view]")
+          .forEach((i) => i.classList.remove("active"));
+        const homeItem = document.querySelector('.sidebar .nav-item[data-view="feed"]');
+        if (homeItem) homeItem.classList.add("active");
+
+        renderFeed();
+      });
+    });
+
+    // Initial render (empty until Firestore loads)
+    renderFeed();
+    renderTopPicks();
+    renderNotifications();
+  </script>
+
+  <!-- Firebase: Auth + Firestore -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged,
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      onSnapshot,
+      query,
+      orderBy,
+      updateDoc,
+      doc,
+      serverTimestamp,
+      increment
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCJNP-0eZsdfqUAsc4fs2GCAJidVtCFajk",
+      authDomain: "writeyourself-461ea.firebaseapp.com",
+      projectId: "writeyourself-461ea",
+      storageBucket: "writeyourself-461ea.appspot.com",
+      messagingSenderId: "316160550930",
+      appId: "1:316160550930:web:cd49c03c46f44497f450cb",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    console.log("Firebase (Auth + Firestore) ready");
+
+    const emailInput = document.getElementById("auth-email");
+    const passwordInput = document.getElementById("auth-password");
+    const statusSpan = document.getElementById("auth-status");
+    const btnSignup = document.getElementById("auth-signup");
+    const btnLogin = document.getElementById("auth-login");
+    const btnLogout = document.getElementById("auth-logout");
+
+    window.currentUser = null;
+
+    btnSignup?.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        alert("Enter email and password.");
+        return;
+      }
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert("Account created! You are now logged in.");
+      } catch (err) {
+        console.error(err);
+        alert(err.message);
+      }
+    });
+
+    btnLogin?.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        alert("Enter email and password.");
+        return;
+      }
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        alert("Logged in!");
+      } catch (err) {
+        console.error(err);
+        alert(err.message);
+      }
+    });
+
+    btnLogout?.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+      } catch (err) {
+        console.error(err);
+        alert(err.message);
+      }
+    });
+
+    function startPostsListener() {
+      if (!window.state) return;
+
+      const postsRef = collection(db, "posts");
+      const q = query(postsRef, orderBy("createdAt", "desc"));
+
+      onSnapshot(
+        q,
+        (snapshot) => {
+          const prevEntries = window.state.entries || [];
+          window.state.entries = snapshot.docs.map((docSnap) => {
+            const data = docSnap.data();
+            const prev = prevEntries.find((e) => String(e.id) === docSnap.id) || {};
+            return {
+              id: docSnap.id,
+              ...data,
+              createdAt:
+                data.createdAt && data.createdAt.toDate
+                  ? data.createdAt.toDate()
+                  : new Date(),
+              _liked: prev._liked || false,
+              _bookmarked: prev._bookmarked || false,
+            };
+          });
+
+          if (window.renderFeed) window.renderFeed();
+          if (window.renderTopPicks) window.renderTopPicks();
+        },
+        (err) => {
+          console.error("Error listening to posts:", err);
+        }
+      );
+    }
+
+    async function savePostToFirestore(postData) {
+      const postsRef = collection(db, "posts");
+      await addDoc(postsRef, {
+        ...postData,
+        createdAt: serverTimestamp(),
+      });
+    }
+
+    async function updatePostCounts(postId, fields) {
+      const postRef = doc(db, "posts", postId);
+      await updateDoc(postRef, fields);
+    }
+
+    window.savePostToFirestore = savePostToFirestore;
+    window.updatePostCounts = updatePostCounts;
+
+    onAuthStateChanged(auth, (user) => {
+      window.currentUser = user || null;
+
+      if (user) {
+        statusSpan.textContent = `Logged in as ${user.email || "user"}`;
+        btnLogout.style.display = "inline-block";
+        btnLogin.style.display = "none";
+        btnSignup.style.display = "none";
+      } else {
+        statusSpan.textContent = "Not logged in";
+        btnLogout.style.display = "none";
+        btnLogin.style.display = "inline-block";
+        btnSignup.style.display = "inline-block";
+      }
+
+      if (window.renderFeed) window.renderFeed();
+      if (window.renderTopPicks) window.renderTopPicks();
+
+      console.log("Auth state changed:", user);
+    });
+
+    startPostsListener();
+  </script>
+</body>
+</html>
